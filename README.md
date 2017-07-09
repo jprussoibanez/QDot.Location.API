@@ -48,6 +48,47 @@ http://[server]/swagger
 
 ![Swagger sample](/images/Swagger.jpg?raw=true "Swagger sample")
 
+### Request Example
+
+```
+http://[server]/api/us/location?zipCodes=10000&zipCodes=90210&zipCodes=94131
+```
+
+### Response Example
+
+```
+[
+  {
+    "state": "New York",
+    "places": [
+      {
+        "name": "New York City",
+        "latitude": 40.7069,
+        "longitude": -73.6731,
+        "zipCode": "10000"
+      }
+    ]
+  },
+  {
+    "state": "California",
+    "places": [
+      {
+        "name": "Beverly Hills",
+        "latitude": 34.0901,
+        "longitude": -118.4065,
+        "zipCode": "90210"
+      },
+      {
+        "name": "San Francisco",
+        "latitude": 37.745,
+        "longitude": -122.4383,
+        "zipCode": "94131"
+      }
+    ]
+  }
+]
+```
+
 ## Built With
 
 * [.NET Core](https://www.microsoft.com/net/core) - ASP.NET core
