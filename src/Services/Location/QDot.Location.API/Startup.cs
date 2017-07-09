@@ -55,7 +55,7 @@ namespace QDot.API
                 {
                     Version = "v1",
                     Title = "QDot Location API",
-                    Description = "QDot C# exercise",
+                    Description = "API for searching US zip codes locations",
                     TermsOfService = "None"
                 });
 
