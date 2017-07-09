@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  qdot.location.api:
+    image: qdot.location.api
+    build:
+      context: ./src/Services/Location/QDot.Location.API
+      dockerfile: Dockerfile
