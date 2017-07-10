@@ -58,7 +58,7 @@ namespace QDot.UnitTest.Services
             mockAPIClient.SetupAPICall(_GetSanFrancisco());
             mockAPIClient.SetupAPICall(_GetBeverlyHills());
             mockAPIClient.SetupAPICall(_GetNewYork());
-            
+
             //Act
             var locations = await locationService.GetLocationsAsync(new List<string> { _GetBeverlyHills().PostCode, _GetSanFrancisco().PostCode, _GetNewYork().PostCode });
 
@@ -80,7 +80,7 @@ namespace QDot.UnitTest.Services
                 .Throws(new APIClientParameterException());
 
             //Act
-            Func<Task> act = async () => await locationService.GetLocationsAsync(new List<string> {"bad zip code"});
+            Func<Task> act = async () => await locationService.GetLocationsAsync(new List<string> { "bad zip code" });
 
             //Assert
             act.ShouldThrow<ServiceParameterException>();
@@ -92,14 +92,31 @@ namespace QDot.UnitTest.Services
             //Arrange
             var mockAPIClient = new Mock<IAPIClient>();
             var locationService = new LocationService(mockAPIClient.Object);
-            
+
             //Act
             Func<Task> act = async () => await locationService.GetLocationsAsync(null);
 
             //Assert
             act.ShouldThrow<ServiceParameterException>();
         }
-        
+
+        [Fact(DisplayName = "Get multiple same locations for one zip code in new york")]
+        public async void GetMultipleSameLocationsForNewYork()
+        {
+            //Arrange
+            var mockAPIClient = new Mock<IAPIClient>();
+            var locationService = new LocationService(mockAPIClient.Object);
+            mockAPIClient.SetupAPICall(_GetNewYork());
+
+            //Act
+            var locations = await locationService.GetLocationsAsync(
+                new List<string> { _GetNewYork().PostCode, _GetNewYork().PostCode, _GetNewYork().PostCode }
+            );
+
+            //Assert
+            locations.Should().BeEquivalentTo(_GetNewYorkLocations());
+        }
+
         #region Arrange Helpers
 
         private Location.Core.Models.Location _GetCaliforniaLocations()

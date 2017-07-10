@@ -31,21 +31,21 @@ namespace QDot.Location.Core.Services
 
         #region Operations
 
-        public async Task<IEnumerable<Models.Location>> GetLocationsAsync(List<string> zipCodes)
+        public async Task<IEnumerable<Models.Location>> GetLocationsAsync(IEnumerable<string> zipCodes)
         {
-            _ValidateZipCodes(zipCodes);
+            var validatedZipCodes = _ValidateZipCodes(zipCodes);
 
             try
             {
-                var locations = await Task.WhenAll(zipCodes.Select(zipCode => _apiClient.ExecuteAsync(new GetPlacesByZipCodeRequest(zipCode))));
+                var locations = await Task.WhenAll(validatedZipCodes.Select(zipCode => _apiClient.ExecuteAsync(new GetPlacesByZipCodeRequest(zipCode))));
 
                 return from location in locations
                        from places in location.Places
-                       group new { places, location } by places.State into resultsByState
+                       group new { places, location.PostCode } by places.State into resultsByState
                        select new Models.Location
                        {
                            State = resultsByState.Key,
-                           Places = resultsByState.Select(g => new Place(g.places, g.location.PostCode)).ToList()
+                           Places = resultsByState.Select(g => new Place(g.places, g.PostCode)).ToList()
                        };
 
             }
@@ -60,16 +60,18 @@ namespace QDot.Location.Core.Services
 
         #region Helpers
 
-        private void _ValidateZipCodes(List<string> zipCodes)
+        private IEnumerable<string> _ValidateZipCodes(IEnumerable<string> zipCodes)
         {
             if (zipCodes == null)
             {
                 throw new ServiceParameterException(ErrorMessages.ZipCodesRequired);
             }
 
+            var distinctZipCodes = zipCodes.Distinct();
+
             try
             {
-                foreach (var zipCode in zipCodes)
+                foreach (var zipCode in distinctZipCodes)
                 {
                     var request = new GetPlacesByZipCodeRequest(zipCode);
                     request.Validate();
@@ -79,6 +81,8 @@ namespace QDot.Location.Core.Services
             {
                 throw new ServiceParameterException(ex.Message, ex);
             }
+
+            return distinctZipCodes;
         }
 
         private void _HandleWebException(WebException ex)

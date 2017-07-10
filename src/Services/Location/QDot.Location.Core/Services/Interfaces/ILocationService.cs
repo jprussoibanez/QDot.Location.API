@@ -6,6 +6,6 @@ namespace QDot.Location.Core.Services.Interfaces
 {
     public interface ILocationService
     {
-        Task<IEnumerable<Models.Location>> GetLocationsAsync(List<string> zipCodes);
+        Task<IEnumerable<Models.Location>> GetLocationsAsync(IEnumerable<string> zipCodes);
     }
 }
